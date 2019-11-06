@@ -3,7 +3,7 @@
 Plugin Name: PMPro Customizations
 Plugin URI: https://www.paidmembershipspro.com/create-a-plugin-for-pmpro-customizations/
 Description: Customizations for DIA PMPro
-Version: .2
+Version: .3
 Author(s): Nicholas, Tomasz
 */
  
