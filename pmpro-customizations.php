@@ -63,7 +63,7 @@ function my_pmpro_renew_membership_shortcode() {
 
     $last_level_query = $wpdb->get_results("SELECT * FROM $wpdb->pmpro_memberships_users WHERE user_id = $current_user->ID ORDER BY id DESC LIMIT 1");
     $last_level = pmpro_getLevel( $last_level_query[0]->membership_id );
-    // If the user did not ever have a membership level, don't display anything.
+    // If the user did not ever have a membership level, show a sign up link
     if( empty( $last_level ) ) {
     ?>
     <style>
