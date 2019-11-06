@@ -63,25 +63,31 @@ function my_pmpro_renew_membership_shortcode() {
 
     $last_level_query = $wpdb->get_results("SELECT * FROM $wpdb->pmpro_memberships_users WHERE user_id = $current_user->ID ORDER BY id DESC LIMIT 1");
     $last_level = pmpro_getLevel( $last_level_query[0]->membership_id );
+
     // If the user did not ever have a membership level, show a sign up link
     if( empty( $last_level ) ) {
-    ?>
-    <style>
-        a.pmpro-renew-button {
-            background-color: #4CAF50;
-            border: none;
-            color: #fff;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-        }
-    </style>
-    <?php
+        /* TODO: Re-use styles */
+        ?>
+        <style>
+            a.pmpro-renew-button {
+                background-color: #4CAF50;
+                border: none;
+                color: #fff;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+            }
+        </style>
+        <?php
 
-    $url = add_query_arg( 'level', $last_level->id, get_permalink( $pmpro_pages['checkout'] ) );
-    return '<a class="pmpro-renew-button" href="' . esc_url( $url ) . '">Sign me up!</a>';
+        $url = add_query_arg( 'level', $last_level->id, get_permalink( $pmpro_pages['checkout'] ) );
+        return '<a class="pmpro-renew-button" href="' . esc_url( $url ) . '">Sign me up!</a>';
+    }
+
+    elseif( $last_level->id == 3) {
+        return 'Please contact DIA directly to change your recurring membership';
     }
 
     // CSS Styling that changes link into a button.
