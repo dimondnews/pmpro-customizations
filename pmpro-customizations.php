@@ -48,6 +48,19 @@ add_filter( 'pmproeewe_email_frequency_and_templates', 'custom_pmproeewe_email_f
 
 
 /**
+ * Enqueue additional stylesheet.
+ *
+ * @return void
+ */
+function pmproc_preheader() {
+    if ( ! is_admin() ) {
+        wp_enqueue_style( 'pmproc_stylesheet', plugins_url( 'css/pmpro-customizations.css', __FILE__ ),
+            array(), '1.0', 'all' );
+    }
+}
+add_action( 'wp_enqueue_scripts', 'pmproc_preheader', 1 );
+
+/**
  * Add this code to your PMPro Customizations Plugin - https://www.paidmembershipspro.com/create-a-plugin-for-pmpro-customizations/
  * The my_pmpro_renew_membership_shortcode is a custom function creating a renew link for members and expired members.
  * Use the shortcode [pmpro_renew_button] to display the button anywhere on your site where shortcodes are recognized.
@@ -63,51 +76,21 @@ function my_pmpro_renew_membership_shortcode() {
 
     $last_level_query = $wpdb->get_results("SELECT * FROM $wpdb->pmpro_memberships_users WHERE user_id = $current_user->ID ORDER BY id DESC LIMIT 1");
     $last_level = pmpro_getLevel( $last_level_query[0]->membership_id );
+    $url = add_query_arg( 'level', $last_level->id, get_permalink( $pmpro_pages['checkout'] ) );
 
     // If the user did not ever have a membership level, show a sign up link
     if( empty( $last_level ) ) {
-        /* TODO: Re-use styles */
-        ?>
-        <style>
-            a.pmpro-renew-button {
-                background-color: #4CAF50;
-                border: none;
-                color: #fff;
-                padding: 15px 32px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-            }
-        </style>
-        <?php
-
-        $url = add_query_arg( 'level', $last_level->id, get_permalink( $pmpro_pages['checkout'] ) );
         return '<a class="pmpro-renew-button" href="' . esc_url( $url ) . '">Sign me up!</a>';
     }
 
+    // Don't show a button for recurring memberships
     elseif( $last_level->id == 3) {
         return 'Please contact DIA directly to change your recurring membership';
     }
 
-    // CSS Styling that changes link into a button.
-    ?>
-    <style>
-        a.pmpro-renew-button {
-            background-color: #4CAF50;
-            border: none;
-            color: #fff;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-        }
-    </style>
-    <?php
-
-    $url = add_query_arg( 'level', $last_level->id, get_permalink( $pmpro_pages['checkout'] ) );
-    return '<a class="pmpro-renew-button" href="' . esc_url( $url ) . '">Renew Membership</a>';
-
+    // Everyone else
+    else {
+        return '<a class="pmpro-renew-button" href="' . esc_url($url) . '">Renew Membership</a>';
+    }
 }
 add_shortcode( 'pmpro_renew_button', 'my_pmpro_renew_membership_shortcode' );
