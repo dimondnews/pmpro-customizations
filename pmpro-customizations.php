@@ -83,9 +83,10 @@ function my_pmpro_renew_membership_shortcode() {
         return '<a class="pmpro-renew-button" href="' . esc_url( $url ) . '">Sign me up!</a>';
     }
 
-    // Don't show a button for recurring memberships
+    // Allow re-curring members to change or cancel
     elseif( $last_level->id == 3) {
-        return 'Please contact DIA directly to change your recurring membership';
+        $url = get_permalink( $pmpro_pages['account'] );
+        return '<a class="pmpro-renew-button" href="' . esc_url( $url ) . '">Update Membership!</a>';
     }
 
     // Everyone else
