@@ -75,11 +75,18 @@ function my_pmpro_renew_membership_shortcode() {
     }
 
     $last_level_query = $wpdb->get_results("SELECT * FROM $wpdb->pmpro_memberships_users WHERE user_id = $current_user->ID ORDER BY id DESC LIMIT 1");
-    $last_level = pmpro_getLevel( $last_level_query[0]->membership_id );
-    $url = add_query_arg( 'level', $last_level->id, get_permalink( $pmpro_pages['checkout'] ) );
 
-    // If the user did not ever have a membership level, show a sign up link
+    // Never registered for an account
+    if( empty( $last_level_query ) ) {
+    	$url = get_permalink( $pmpro_pages['checkout'] );
+        return '<a class="pmpro-renew-button" href="' . esc_url( $url ) . '">Sign me up!</a>';
+    }
+
+    $last_level = pmpro_getLevel( $last_level_query[0]->membership_id );
+
+    // User exists but has no membership level
     if( empty( $last_level ) ) {
+        $url = get_permalink( $pmpro_pages['checkout'] );
         return '<a class="pmpro-renew-button" href="' . esc_url( $url ) . '">Sign me up!</a>';
     }
 
@@ -91,6 +98,7 @@ function my_pmpro_renew_membership_shortcode() {
 
     // Everyone else
     else {
+	    $url = get_permalink( $pmpro_pages['checkout'] );
         return '<a class="pmpro-renew-button" href="' . esc_url($url) . '">Renew Membership</a>';
     }
 }
